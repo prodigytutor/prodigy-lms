@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// schema.prisma
+
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Course {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String?
+  category     Category  @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  instructor   Instructor @relation(fields: [instructorId], references: [id])
+  instructorId Int
+  content      CourseContent[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model CourseContent {
+  id          Int     @id @default(autoincrement())
+  course      Course  @relation(fields: [courseId], references: [id])
+  courseId    Int
+  module      String
+  contentType String
+  contentData String?
+  order       Int
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  courses     Course[]
+}
+
+model Instructor {
+  id         Int     @id @default(autoincrement())
+  name       String
+  bio        String?
+  profilePic String?
+  courses    Course[]
+}
